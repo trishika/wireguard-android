@@ -4,6 +4,7 @@
     android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="false"
@@ -48,9 +49,23 @@
                 android:name="android.service.quicksettings.ACTIVE_TILE"
                 android:value="true" />
         </service>
+
+        <service android:name=".ConfigManager" />
+
         <service
-            android:name=".VpnService"
+            android:name=".KernelVpnService"
             android:exported="false" />
+
+        <service
+             android:name=".AndroidVpnService"
+             android:permission="android.permission.BIND_VPN_SERVICE" >
+             <intent-filter>
+                 <action android:name="android.net.VpnService" />
+             </intent-filter>
+         </service>
+
+
+
     </application>
 
 </manifest>

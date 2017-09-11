@@ -30,7 +30,7 @@ abstract class BaseConfigFragment extends Fragment {
         else if (getArguments() != null)
             initialConfig = getArguments().getString(KEY_CURRENT_CONFIG);
         if (initialConfig != null && currentConfig == null)
-            setCurrentConfig(VpnService.getInstance().get(initialConfig));
+            setCurrentConfig(ConfigManager.getInstance().get(initialConfig));
     }
 
     @Override

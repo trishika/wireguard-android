@@ -113,12 +113,12 @@ public class ConfigEditFragment extends BaseConfigFragment {
     }
 
     private void saveConfig() {
-        final VpnService service = VpnService.getInstance();
+        final ConfigManager configManager = ConfigManager.getInstance();
         try {
             if (getCurrentConfig() != null)
-                service.update(getCurrentConfig().getName(), localConfig);
+                configManager.update(getCurrentConfig().getName(), localConfig);
             else
-                service.add(localConfig);
+                configManager.add(localConfig);
         } catch (final IllegalArgumentException | IllegalStateException e) {
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             return;

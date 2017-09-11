@@ -38,6 +38,8 @@
     <string name="public_key_description">WireGuard public key</string>
     <string name="restore_on_boot">Restore on boot</string>
     <string name="restore_on_boot_summary">Restore previously enabled configurations on boot</string>
+    <string name="use_kernel_module">Use the WireGuard kernel implementation</string>
+    <string name="use_kernel_module_summary">Require a kernel with WireGuard support and root right</string>
     <string name="save">Save</string>
     <string name="settings">Settings</string>
     <string name="status">Status</string>

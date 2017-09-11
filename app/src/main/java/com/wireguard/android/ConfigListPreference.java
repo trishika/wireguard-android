@@ -14,7 +14,7 @@ public class ConfigListPreference extends ListPreference {
     public ConfigListPreference(final Context context, final AttributeSet attrs,
                                 final int defStyleAttr, final int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        final Set<String> entrySet = VpnService.getInstance().getConfigs().keySet();
+        final Set<String> entrySet = ConfigManager.getInstance().getConfigs().keySet();
         final CharSequence[] entries = entrySet.toArray(new CharSequence[entrySet.size()]);
         setEntries(entries);
         setEntryValues(entries);

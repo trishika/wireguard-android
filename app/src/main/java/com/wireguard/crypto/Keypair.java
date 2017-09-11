@@ -42,8 +42,14 @@ public class Keypair {
     public String getPrivateKey() {
         return KeyEncoding.keyToBase64(privateKey);
     }
+    public String getPrivateKeyHex() {
+        return KeyEncoding.keyToHex(privateKey);
+    }
 
     public String getPublicKey() {
         return KeyEncoding.keyToBase64(publicKey);
+    }
+    public String getPublicKeyHex() {
+        return KeyEncoding.keyToHex(publicKey);
     }
 }

@@ -10,6 +10,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))
             return;
-        context.startService(new Intent(context, VpnService.class));
+        context.startService(new Intent(context, ConfigManager.class));
     }
 }

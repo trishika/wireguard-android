@@ -15,7 +15,7 @@ import com.wireguard.crypto.Keypair;
  */
 
 public class Interface extends BaseObservable
-        implements Copyable<Interface>, Observable, Parcelable {
+        implements Copyable<Interface>, Observable, Parcelable, IpcSerializable {
     public static final Parcelable.Creator<Interface> CREATOR
             = new Parcelable.Creator<Interface>() {
         @Override
@@ -199,5 +199,15 @@ public class Interface extends BaseObservable
         dest.writeString(listenPort);
         dest.writeString(mtu);
         dest.writeString(privateKey);
+    }
+
+    @Override
+    public String toIpcString() {
+        final StringBuilder sb = new StringBuilder();
+        if (listenPort != null)
+            sb.append(IpcAttribute.LISTEN_PORT.composeWith(listenPort));
+        if (privateKey != null)
+            sb.append(IpcAttribute.PRIVATE_KEY.composeWith(keypair.getPrivateKeyHex()));
+        return sb.toString();
     }
 }

@@ -3,8 +3,6 @@ package com.wireguard.android;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -18,11 +16,12 @@ import com.wireguard.config.Config;
 @TargetApi(Build.VERSION_CODES.N)
 public class QuickTileService extends TileService {
     private Config config;
+    private ConfigManager configManager;
     private SharedPreferences preferences;
-    private VpnService service;
 
     @Override
     public void onClick() {
+        VpnService service = VpnService.Singleton.getInstance();
         if (service != null && config != null) {
             if (config.isEnabled())
                 service.disable(config.getName());
@@ -34,10 +33,9 @@ public class QuickTileService extends TileService {
     @Override
     public void onCreate() {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        service = VpnService.getInstance();
-        if (service == null)
-            bindService(new Intent(this, VpnService.class), new ServiceConnectionCallbacks(),
-                    Context.BIND_AUTO_CREATE);
+        configManager = ConfigManager.getInstance();
+        if (configManager == null)
+            new ConfigManagerCallbacks(this);
         TileService.requestListeningState(this, new ComponentName(this, getClass()));
     }
 
@@ -45,8 +43,8 @@ public class QuickTileService extends TileService {
     public void onStartListening() {
         // Since this is an active tile, this only gets called when we want to update the tile.
         final Tile tile = getQsTile();
-        final String configName = preferences.getString(VpnService.KEY_PRIMARY_CONFIG, null);
-        config = configName != null && service != null ? service.get(configName) : null;
+        final String configName = preferences.getString(ConfigManager.KEY_PRIMARY_CONFIG, null);
+        config = configName != null && configManager != null ? configManager.get(configName) : null;
         if (config != null) {
             tile.setLabel(config.getName());
             final int state = config.isEnabled() ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
@@ -65,18 +63,14 @@ public class QuickTileService extends TileService {
         tile.updateTile();
     }
 
-    private class ServiceConnectionCallbacks implements ServiceConnection {
-        @Override
-        public void onServiceConnected(final ComponentName component, final IBinder binder) {
-            // We don't actually need a binding, only notification that the service is started.
-            unbindService(this);
-            service = VpnService.getInstance();
+    private class ConfigManagerCallbacks extends ConfigManager.ConfigManagerConnection {
+        public ConfigManagerCallbacks(Context ctx) {
+            super(ctx);
         }
 
         @Override
-        public void onServiceDisconnected(final ComponentName component) {
-            // This can never happen; the service runs in the same thread as this service.
-            throw new IllegalStateException();
+        public void onServiceConnected(final ComponentName component, final IBinder binder) {
+            configManager = ConfigManager.getInstance();
         }
     }
 }

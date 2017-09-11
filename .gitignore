@@ -5,7 +5,12 @@
 .DS_Store
 Thumbs.db
 build/
+*.swp
 *.apk
 *.class
 *.dex
 *.iml
+*.a
+*.aar
+wireguardbinding/pkg
+wireguardbinding/src/golang.org

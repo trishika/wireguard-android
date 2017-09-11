@@ -30,8 +30,9 @@ public class AddActivity extends BaseConfigActivity {
     }
 
     @Override
-    protected void onServiceAvailable() {
-        super.onServiceAvailable();
+    protected void onConfigManagerAvailable() {
+        super.onConfigManagerAvailable();
+
         final FragmentManager fm = getFragmentManager();
         ConfigEditFragment fragment = (ConfigEditFragment) fm.findFragmentById(R.id.master_fragment);
         if (fragment == null) {

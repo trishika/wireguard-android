@@ -42,7 +42,7 @@ public class ConfigListFragment extends BaseConfigFragment {
                              final Bundle savedInstanceState) {
         final ConfigListFragmentBinding binding =
                 ConfigListFragmentBinding.inflate(inflater, parent, false);
-        binding.setConfigs(VpnService.getInstance().getConfigs());
+        binding.setConfigs(ConfigManager.getInstance().getConfigs());
         listView = binding.configList;
         listView.setMultiChoiceModeListener(new ConfigListModeListener());
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -109,7 +109,7 @@ public class ConfigListFragment extends BaseConfigFragment {
                     if (configsToRemove.contains(getCurrentConfig()))
                         setCurrentConfig(null);
                     for (final Config config : configsToRemove)
-                        VpnService.getInstance().remove(config.getName());
+                        ConfigManager.getInstance().remove(config.getName());
                     configsToRemove.clear();
                     mode.finish();
                     return true;

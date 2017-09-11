@@ -222,8 +222,8 @@ public class ConfigActivity extends BaseConfigActivity {
     }
 
     @Override
-    protected void onServiceAvailable() {
-        super.onServiceAvailable();
+    protected void onConfigManagerAvailable() {
+        super.onConfigManagerAvailable();
         // Allow creating fragments.
         isServiceAvailable = true;
         moveToState(getCurrentConfig(), isEditing());

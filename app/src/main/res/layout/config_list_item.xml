@@ -2,9 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
         <import type="android.graphics.Typeface" />
-
         <import type="com.wireguard.android.VpnService" />
 
         <variable
@@ -38,7 +36,7 @@
             android:layout_alignBaseline="@+id/config_name"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
-            android:onClick="@{() -> item.enabled ? VpnService.instance.disable(item.name) : VpnService.instance.enable(item.name)}"
+            android:onClick="@{() -> item.enabled ? VpnService.Singleton.getInstance().disable(item.name) : VpnService.Singleton.getInstance().enable(item.name)}"
             android:text="@string/toggle"
             android:textColor="@{item.enabled ? @android:color/holo_green_dark : @android:color/holo_red_dark}" />
     </RelativeLayout>

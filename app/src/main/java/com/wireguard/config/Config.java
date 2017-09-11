@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
  */
 
 public class Config extends BaseObservable
-        implements Comparable<Config>, Copyable<Config>, Observable, Parcelable {
+        implements Comparable<Config>, Copyable<Config>, Observable, Parcelable, IpcSerializable {
     public static final Parcelable.Creator<Config> CREATOR = new Parcelable.Creator<Config>() {
         @Override
         public Config createFromParcel(final Parcel in) {
@@ -185,5 +185,15 @@ public class Config extends BaseObservable
         dest.writeParcelable(iface, flags);
         dest.writeString(name);
         dest.writeTypedList(peers);
+    }
+
+    @Override
+    public String toIpcString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(iface.toIpcString());
+        sb.append("replace_peers=true\n");
+        for (final Peer peer : peers)
+            sb.append(peer.toIpcString());
+        return sb.toString();
     }
 }

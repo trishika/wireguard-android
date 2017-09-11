@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -43,12 +42,19 @@ abstract class BaseConfigActivity extends Activity {
             initialConfig = intent.getStringExtra(KEY_CURRENT_CONFIG);
             wasEditing = intent.getBooleanExtra(KEY_IS_EDITING, false);
         }
-        // Trigger starting the service as early as possible
-        if (VpnService.getInstance() != null)
-            onServiceAvailable();
+
+        // Trigger starting the services as early as possible
+        if (ConfigManager.getInstance() != null)
+            onConfigManagerAvailable();
         else
-            bindService(new Intent(this, VpnService.class), new ServiceConnectionCallbacks(),
-                    Context.BIND_AUTO_CREATE);
+            new ConfigManagerConnectionCallbacks(this);
+
+        Intent intent = AndroidVpnService.prepare(this);
+        if (intent != null) {
+            startActivityForResult(intent, 0);
+        } else {
+            onActivityResult(0, RESULT_OK, null);
+        }
     }
 
     protected abstract void onCurrentConfigChanged(Config config);
@@ -63,11 +69,23 @@ abstract class BaseConfigActivity extends Activity {
         outState.putBoolean(KEY_IS_EDITING, isEditing);
     }
 
-    protected void onServiceAvailable() {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (VpnService.Singleton.getInstance() != null)
+                onVpnServiceAvailable();
+            else
+                new VpnServiceConnectionCallbacks(this);
+        }
+    }
+
+    protected void onConfigManagerAvailable() {
         // Make sure the subclass activity is initialized before setting its config.
         if (initialConfig != null && currentConfig == null)
-            setCurrentConfig(VpnService.getInstance().get(initialConfig));
+            setCurrentConfig(ConfigManager.getInstance().get(initialConfig));
         setIsEditing(wasEditing);
+    }
+
+    protected void onVpnServiceAvailable() {
     }
 
     public void setCurrentConfig(final Config config) {
@@ -84,18 +102,25 @@ abstract class BaseConfigActivity extends Activity {
         onEditingStateChanged(isEditing);
     }
 
-    private class ServiceConnectionCallbacks implements ServiceConnection {
-        @Override
-        public void onServiceConnected(final ComponentName component, final IBinder binder) {
-            // We don't actually need a binding, only notification that the service is started.
-            unbindService(this);
-            onServiceAvailable();
+    private class VpnServiceConnectionCallbacks extends VpnService.Singleton.VpnServiceConnection {
+        public VpnServiceConnectionCallbacks(Context ctx) {
+            super(ctx);
         }
 
         @Override
-        public void onServiceDisconnected(final ComponentName component) {
-            // This can never happen; the service runs in the same thread as the activity.
-            throw new IllegalStateException();
+        public void onServiceConnected(final ComponentName component, final IBinder binder) {
+            onVpnServiceAvailable();
+        }
+    }
+
+    private class ConfigManagerConnectionCallbacks extends ConfigManager.ConfigManagerConnection {
+        public ConfigManagerConnectionCallbacks(Context ctx) {
+            super(ctx);
+        }
+
+        @Override
+        public void onServiceConnected(final ComponentName component, final IBinder binder) {
+            onConfigManagerAvailable();
         }
     }
 }

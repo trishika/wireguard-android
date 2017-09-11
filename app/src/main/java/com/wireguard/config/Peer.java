@@ -7,12 +7,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.android.databinding.library.baseAdapters.BR;
+import com.wireguard.crypto.KeyEncoding;
 
 /**
  * Represents the configuration for a WireGuard peer (a [Peer] block).
  */
 
-public class Peer extends BaseObservable implements Copyable<Peer>, Observable, Parcelable {
+public class Peer extends BaseObservable implements Copyable<Peer>, Observable, Parcelable, IpcSerializable {
     public static final Parcelable.Creator<Peer> CREATOR = new Parcelable.Creator<Peer>() {
         @Override
         public Peer createFromParcel(final Parcel in) {
@@ -174,5 +175,23 @@ public class Peer extends BaseObservable implements Copyable<Peer>, Observable, 
         dest.writeString(persistentKeepalive);
         dest.writeString(preSharedKey);
         dest.writeString(publicKey);
+    }
+
+    @Override
+    public String toIpcString() {
+        final StringBuilder sb = new StringBuilder();
+        if (publicKey != null)
+            sb.append(IpcAttribute.PUBLIC_KEY.composeWith(KeyEncoding.keyToHex(KeyEncoding.keyFromBase64(publicKey))));
+        if (endpoint != null)
+            sb.append(IpcAttribute.ENDPOINT.composeWith(endpoint));
+        if (persistentKeepalive != null)
+            sb.append(IpcAttribute.PERSISTENT_KEEPALIVE.composeWith(persistentKeepalive));
+        if (allowedIPs != null) {
+            sb.append("replace_allowed_ips=true\n");
+            sb.append(IpcAttribute.ALLOWED_IPS.composeWith(allowedIPs));
+        }
+        if (preSharedKey != null)
+            sb.append(IpcAttribute.PRE_SHARED_KEY.composeWith(preSharedKey));
+        return sb.toString();
     }
 }
