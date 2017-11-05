@@ -1,0 +1,3 @@
+[submodule "wireguard-go"]
+	path = wireguard-go
+	url = git@github.com:trishika/wireguard-go.git
