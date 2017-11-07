@@ -347,7 +347,7 @@ public class ConfigManager extends Service
         private ConfigUpdater(final Config knownConfig, final Config newConfig) {
             this.knownConfig = knownConfig;
             this.newConfig = newConfig.copy();
-            this.newConfig.setIsEnabled(this.knownConfig.isEnabled());
+            this.newConfig.setIsEnabled(knownConfig != null ? knownConfig.isEnabled() : false);
             newName = newConfig.getName();
             // When adding a config, "old file" and "new file" are the same thing.
             oldName = knownConfig != null ? knownConfig.getName() : newName;
